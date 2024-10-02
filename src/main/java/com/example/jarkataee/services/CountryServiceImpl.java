@@ -38,8 +38,42 @@ public class CountryServiceImpl implements CountryService {
                 .collect(Collectors.toList());
     }
 
-    private List<City> fetchCitiesFromApi(String countryName) {
-        return null;
+
+    public List<City> fetchCitiesFromApi(String countryName) throws IOException, InterruptedException {
+        // Define the API endpoint and payload
+        String apiUrl = "https://countriesnow.space/api/v0.1/countries/cities";
+        String jsonPayload = String.format("{\"country\": \"%s\"}", countryName);
+
+        // Create the HTTP client
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create the HTTP request with the POST method and JSON body
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                .build();
+
+        // Send the request and receive the response
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Parse the JSON response
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.body());
+
+        List<City> cities = new ArrayList<>();
+
+        // Extract cities from the "data" array if there is no error
+        if (!rootNode.get("error").asBoolean()) {
+            JsonNode citiesNode = rootNode.get("data");
+            for (JsonNode cityNode : citiesNode) {
+                cities.add(new City(cityNode.asText()));
+            }
+        } else {
+            System.out.println("Error fetching cities: " + rootNode.get("msg").asText());
+        }
+
+        return cities;
     }
 
 
