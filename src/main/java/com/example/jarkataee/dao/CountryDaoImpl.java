@@ -67,7 +67,7 @@ public class CountryDaoImpl implements CountryDao {
         } catch (SQLException e) {
             // Handle error
             System.err.println("Error inserting cities: " + e.getMessage());
-            throw e;  // Optionally rethrow the exception after logging
+//            throw e;
         }
     }
 

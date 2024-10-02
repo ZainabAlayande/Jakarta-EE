@@ -15,9 +15,9 @@ public class LargestCityServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String countryName = request.getParameter("country");
-        CityDTO largestCity = countryService.getLargestCity(countryName);
+//        CityDTO largestCity = countryService.getLargestCity(countryName);
         response.setContentType("application/json");
-        response.getWriter().write(new Gson().toJson(largestCity));
+//        response.getWriter().write(new Gson().toJson(largestCity));
     }
 
 }

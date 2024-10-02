@@ -38,6 +38,9 @@ public class CountryServiceImpl implements CountryService {
                 .collect(Collectors.toList());
     }
 
+    private List<City> fetchCitiesFromApi(String countryName) {
+        return null;
+    }
 
 
     @Override

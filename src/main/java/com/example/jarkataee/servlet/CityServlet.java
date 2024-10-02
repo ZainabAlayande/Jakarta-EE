@@ -25,7 +25,7 @@ public class CityServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         response.setContentType("application/json");
-        response.getWriter().write(new Gson().toJson(cities));
+//        response.getWriter().write(new Gson().toJson(cities));
     }
 
 }
