@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CountryDao {
 
-    void createTableIfNotExists();
+    void createTableIfNotExists() throws SQLException;
 
     List<City> getCitiesByCountry(String countryName) throws SQLException;
 

@@ -6,13 +6,19 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
+import java.sql.SQLException;
+
 @WebListener
 public class AppStartupListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         CountryDao countryDao = new CountryDaoImpl();
-        countryDao.createTableIfNotExists();  // Create table when app starts
+        try {
+            countryDao.createTableIfNotExists();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
