@@ -14,9 +14,6 @@ import java.sql.SQLException;
 public class LargestCityServlet extends HttpServlet {
     private final CountryService countryService = new CountryServiceImpl(new CountryDaoImpl());
 
-    public LargestCityServlet() throws SQLException {
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String countryName = request.getParameter("country");
 //        CountryDTO largestCity = countryService.getLargestCity(countryName);

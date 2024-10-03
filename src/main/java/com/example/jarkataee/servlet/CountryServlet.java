@@ -17,40 +17,6 @@ public class CountryServlet extends HttpServlet {
 
     private final CountryService countryService = new CountryServiceImpl(new CountryDaoImpl());
 
-    public CountryServlet() throws SQLException {
-    }
-
-
-////    @Override
-////    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-////        // Read request body as a string
-////        System.out.println("Hello Here 1");
-////        StringBuilder requestBody = new StringBuilder();
-////        BufferedReader reader = request.getReader();
-////        String line;
-////        while ((line = reader.readLine()) != null) {
-////            requestBody.append(line);
-////        }
-////
-////        // Parse the JSON body to extract the "country" field
-////        JsonObject jsonObject = JsonParser.parseString(requestBody.toString()).getAsJsonObject();
-////        String countryName = jsonObject.get("country").getAsString();
-////
-////        // Call the service to fetch cities for the country
-////        List<CountryDTO> cities = null;
-////        try {
-////            cities = countryService.getCities(countryName);
-////            System.out.println("Hello Here 2");
-////        } catch (SQLException | InterruptedException exception) {
-////            throw new RuntimeException(exception);
-////        }
-////
-////        // Send the cities back as a JSON response
-//        response.setContentType("application/json");
-//        response.getWriter().write(new Gson().toJson(cities));
-//    }
-
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String countryName = request.getParameter("country");

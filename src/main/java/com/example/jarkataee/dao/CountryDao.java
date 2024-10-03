@@ -12,7 +12,6 @@ public interface CountryDao {
 
     List<String> getCitiesByCountry(String countryName) throws SQLException;
 
-    void saveCities(List<City> cities);
 
     void saveCountry(Country country) throws SQLException;
 

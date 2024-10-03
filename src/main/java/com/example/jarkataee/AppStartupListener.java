@@ -25,7 +25,7 @@ public class AppStartupListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // Cleanup code if needed
+
     }
 
 }

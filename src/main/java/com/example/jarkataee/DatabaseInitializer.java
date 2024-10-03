@@ -9,7 +9,6 @@ import java.sql.Statement;
 
 public class DatabaseInitializer {
 
-
     public static void executeSqlScript(String filePath) {
         try (Connection connection = DatabaseConfig.getConnection();
              Statement statement = connection.createStatement();
