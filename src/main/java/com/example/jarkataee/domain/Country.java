@@ -1,18 +1,25 @@
 package com.example.jarkataee.domain;
 
-import java.util.List;
-
 public class Country {
 
+    private Long id;
     private String name;
-    private List<String> cities;
-
+    private Long citiesId;
     private String largestCity;
 
-    public Country(String name, List<String> cities, String largestCity) {
+
+    public Country(String name, Long citiesId, String largestCity) {
         this.name = name;
-        this.cities = cities;
+        this.citiesId = citiesId;
         this.largestCity = largestCity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -23,14 +30,6 @@ public class Country {
         this.name = name;
     }
 
-    public List<String> getCities() {
-        return cities;
-    }
-
-    public void setCities(List<String> cities) {
-        this.cities = cities;
-    }
-
     public String getLargestCity() {
         return largestCity;
     }
@@ -38,4 +37,19 @@ public class Country {
     public void setLargestCity(String largestCity) {
         this.largestCity = largestCity;
     }
+
+    public Long getCitiesId() {
+        return citiesId;
+    }
+
+    public void setCitiesId(Long citiesId) {
+        this.citiesId = citiesId;
+    }
+
+
+    @Override
+    public String toString() {
+        return "City{id='" + id + "', name='" + name + "', citiesId='" + citiesId + "', largestCity='" + largestCity + "'}";
+    }
+
 }

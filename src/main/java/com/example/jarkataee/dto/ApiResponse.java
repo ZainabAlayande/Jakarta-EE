@@ -1,7 +1,5 @@
 package com.example.jarkataee.dto;
 
-import java.util.List;
-
 public class ApiResponse<T> {
 
     private boolean error;

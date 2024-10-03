@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface CountryDao {
 
-    void createTableIfNotExists() throws SQLException;
 
     List<String> getCitiesByCountry(String countryName) throws SQLException;
 
+    Long saveCitiesAndGetId(List<String> cities) throws SQLException;
+
+    String getLargestCityByCountry(String countryName) throws SQLException;
 
     void saveCountry(Country country) throws SQLException;
-
-    String getLargestCityFromDbOrApi(String country);
 
 }
