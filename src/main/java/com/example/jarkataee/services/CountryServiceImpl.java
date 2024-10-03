@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 import com.example.jarkataee.dao.CountryDao;
 import com.example.jarkataee.domain.City;
-import com.example.jarkataee.dto.CityDTO;
+import com.example.jarkataee.domain.Country;
+import com.example.jarkataee.dto.CountryDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,31 +26,28 @@ public class CountryServiceImpl implements CountryService {
         this.countryDao = countryDao;
     }
 
+
     @Override
-    public void saveCities(List<City> cities) {
-        countryDao.saveCities(cities);
+    public void saveCountry(Country country) throws SQLException {
+        countryDao.saveCountry(country);
     }
 
     @Override
-    public List<CityDTO> getCities(String countryName) throws SQLException, IOException, InterruptedException {
-        System.out.println("Hello Here 3");
-        List<City> cities = countryDao.getCitiesByCountry(countryName);
+    public List<String> getCities(String countryName) throws SQLException, IOException, InterruptedException {
+        List<String> cities = countryDao.getCitiesByCountry(countryName);
 
-        System.out.println("Hello Here 4");
         if (cities.isEmpty()) {
-            System.out.println("Hello Here 5");
             cities = fetchCitiesFromApi(countryName);
-            System.out.println("Hello Here 6");
-            saveCities(cities);
-            System.out.println("Hello Here 7");
+            if (cities != null && !cities.isEmpty()) saveCountry(new Country(countryName, cities, ""));
         }
 
-        System.out.println("Hello Here 8");
-        return cities.stream().map(city -> new CityDTO(city.getName(), city.getPopulation())).collect(Collectors.toList());
+        return cities;
     }
 
 
-    public List<City> fetchCitiesFromApi(String countryName) throws InterruptedException, IOException {
+
+
+    public List<String> fetchCitiesFromApi(String countryName) throws InterruptedException, IOException {
         String apiUrl = "https://countriesnow.space/api/v0.1/countries/cities";
         String jsonPayload = String.format("{\"country\": \"%s\"}", countryName);
 
@@ -69,12 +67,12 @@ public class CountryServiceImpl implements CountryService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.body());
 
-            List<City> cities = new ArrayList<>();
+            List<String> cities = new ArrayList<>();
 
             if (!rootNode.get("error").asBoolean()) {
                 JsonNode citiesNode = rootNode.get("data");
                 for (JsonNode cityNode : citiesNode) {
-                    cities.add(new City(cityNode.asText()));
+                    cities.add(cityNode.asText());
                 }
             } else {
                 System.out.println("Error fetching cities: " + rootNode.get("msg").asText());
@@ -91,8 +89,9 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public String getLargestCity(String country) {
-        // Business logic to retrieve the largest city
         return countryDao.getLargestCityFromDbOrApi(country);
     }
+
+
 
 }

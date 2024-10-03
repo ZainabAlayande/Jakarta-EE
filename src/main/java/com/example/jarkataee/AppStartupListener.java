@@ -13,12 +13,14 @@ public class AppStartupListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        CountryDao countryDao = new CountryDaoImpl();
-        try {
-            countryDao.createTableIfNotExists();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        DatabaseInitializer.executeSqlScript("C:\\Users\\ADMIN\\IdeaProjects\\JarkataEE\\src\\main\\resources\\sql\\create_tables.sql");
+//        CountryDao countryDao = new CountryDaoImpl();
+//        try {
+//            countryDao.createTableIfNotExists();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override

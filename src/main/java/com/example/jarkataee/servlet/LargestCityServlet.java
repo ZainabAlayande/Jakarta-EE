@@ -1,11 +1,10 @@
 package com.example.jarkataee.servlet;
 
 import com.example.jarkataee.dao.CountryDaoImpl;
-import com.example.jarkataee.dto.CityDTO;
+import com.example.jarkataee.dto.CountryDTO;
 import com.example.jarkataee.services.CountryService;
 import com.example.jarkataee.services.CountryServiceImpl;
 import com.google.gson.Gson;
-import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.*;
@@ -20,8 +19,8 @@ public class LargestCityServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String countryName = request.getParameter("country");
-//        CityDTO largestCity = countryService.getLargestCity(countryName);
-        CityDTO largestCity = null;
+//        CountryDTO largestCity = countryService.getLargestCity(countryName);
+        CountryDTO largestCity = null;
         response.setContentType("application/json");
         response.getWriter().write(new Gson().toJson(largestCity));
     }
