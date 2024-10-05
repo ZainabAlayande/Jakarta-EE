@@ -32,9 +32,9 @@ public class CountryDaoImpl implements CountryDao {
         }
         return null;
     }
+
     @Override
     public List<String> getCitiesByCountry(String countryName) throws SQLException {
-        System.out.println("Hi 7");
         List<String> cities = new ArrayList<>();
         int citiesId = -1;
 
@@ -60,32 +60,24 @@ public class CountryDaoImpl implements CountryDao {
                 }
             }
         }
-        System.out.println("Hi 8");
-        System.out.println(cities);
         return cities;
     }
 
 
     @Override
     public void saveCountry(Country country) throws SQLException {
-        System.out.println("Hi 26");
         try (Connection conn = DatabaseConfig.getConnection()) {
-            System.out.println("Hi 27");
-
-            System.out.println("Hi 28");
             try (PreparedStatement stmt = conn.prepareStatement(INSERT_COUNTRY_QUERY, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, country.getName());
                 stmt.setLong(2, country.getCitiesId());
                 stmt.setString(3, country.getLargestCity());
                 stmt.executeUpdate();
 
-                System.out.println("Hi 29");
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         int countryId = rs.getInt(1);
                     }
                 }
-                System.out.println("Hi 30");
             }
         }
     }

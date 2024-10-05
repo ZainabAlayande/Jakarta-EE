@@ -55,13 +55,15 @@ cd your-repository-name
 mvn clean install
 ```
 
-### Configuration
+## Configuration
 
-Database Configuration
+### Database Configuration
 Ensure your database connection details are set correctly in the src/main/resources/application.properties file:
 
-Properties
+### Properties
+```
 database.url=jdbc:oracle:thin:@localhost:1521:your_db_name
 database.user=your_db_username
 database.password=your_db_password
+```
 

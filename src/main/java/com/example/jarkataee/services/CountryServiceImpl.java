@@ -45,23 +45,18 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void saveCountry(Country country) throws SQLException {
-        System.out.println("Hi 25");
         countryDao.saveCountry(country);
     }
 
     @Override
     public List<String> getCities(String countryName) throws SQLException, IOException, InterruptedException, ExecutionException {
-        System.out.println("Hi 6");
         List<String> cities = countryDao.getCitiesByCountry(countryName);
         if (cities.isEmpty()) {
             cities = fetchCitiesFromApi(countryName);
 
             if (cities != null && !cities.isEmpty()) {
                 String largestCity = getLargestCityByPopulation(cities);
-                System.out.println("Hi 20");
                 Long citiesId = countryDao.saveCitiesAndGetId(cities);
-                System.out.println("Hi 24");
-                System.out.println("largestCity" + largestCity);
                 saveCountry(new Country(countryName, citiesId, largestCity));
             }
         }
@@ -70,76 +65,70 @@ public class CountryServiceImpl implements CountryService {
     }
 
 
-    private String getLargestCityByPopulation(List<String> cities) throws ExecutionException, InterruptedException {
-        System.out.println("Hi 15");
+    private String getLargestCityByPopulation(List<String> cities) throws ExecutionException, InterruptedException, IOException {
+        System.out.println("cities" + cities);
         String largestCity = "";
         long maxPopulation = 0;
 
         for (String city : cities) {
             CityPopulationData populationData = fetchPopulationForCity(city);
 
-            System.out.println("Hi 18");
             if (populationData != null && populationData.getPopulation() > maxPopulation) {
                 maxPopulation = populationData.getPopulation();
                 largestCity = populationData.getCity();
             }
         }
-        System.out.println("Hi 19");
 
         return largestCity;
     }
 
-    private CityPopulationData fetchPopulationForCity(String cityName) {
-        System.out.println("Hi 16");
-        try {
-            URL url = new URL(POPULATION_API_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
 
-            JsonObject requestPayload = new JsonObject();
-            requestPayload.addProperty("city", cityName);
-            String response = ApiHelper.postRequest(String.valueOf(url), requestPayload.toString());
+    private CityPopulationData fetchPopulationForCity(String cityName) throws IOException, InterruptedException {
+        String apiUrl = POPULATION_API_URL;
+        String jsonPayload = String.format("{\"city\": \"%s\"}", cityName);
 
-            System.out.println("Hi 17");
-            JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
-            if (!jsonResponse.get("error").getAsBoolean()) {
-                JsonObject cityData = jsonResponse.getAsJsonObject("data");
-                String population = cityData.getAsJsonArray("populationCounts")
-                        .get(0).getAsJsonObject().get("value").getAsString();
+        HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
 
-                return new CityPopulationData(cityName, Long.parseLong(population));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-
-    public List<String> fetchCitiesFromApi(String countryName) throws InterruptedException, IOException {
-        System.out.println("Hi 9");
-        String apiUrl = "https://countriesnow.space/api/v0.1/countries/cities";
-        String jsonPayload = String.format("{\"country\": \"%s\"}", countryName);
-
-        System.out.println("Hi 10");
-        HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.ALWAYS).build();
-
-        System.out.println("Hi 11");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                 .build();
 
-        System.out.println("Hi 12");
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Response: " + response.body());
 
-        System.out.println("Hi 13");
         if (response.statusCode() == 200) {
-            System.out.println("Hi 14");
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.body());
+            if (!rootNode.get("error").asBoolean()) {
+                JsonNode cityData = rootNode.get("data");
+
+                String population = cityData.get("populationCounts").get(0).get("value").asText();
+
+                return new CityPopulationData(cityName, Long.parseLong(population));
+            } else {
+                logger.error("Error fetching population data: " + rootNode.get("message").asText());
+            }
+        } else {
+            logger.error("Failed API request. Status code: " + response.statusCode());
+        }
+
+        return null;
+    }
+
+
+    public List<String> fetchCitiesFromApi(String countryName) throws InterruptedException, IOException {
+        String apiUrl = "https://countriesnow.space/api/v0.1/countries/cities";
+        String jsonPayload = String.format("{\"country\": \"%s\"}", countryName);
+
+        HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
             logger.info("Successful API Response");
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.body());
@@ -157,7 +146,6 @@ public class CountryServiceImpl implements CountryService {
 
             return cities;
         } else {
-            System.out.println("Hi 15");
             logger.error("Failed API response. Status code: " + response.statusCode());
             return Collections.emptyList();
         }
